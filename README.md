@@ -1,2 +1,2 @@
 # reader-scraper-admin
-reader scraper(s) administrator
+reader scraper(s) admin service

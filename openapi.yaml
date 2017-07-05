@@ -1,0 +1,281 @@
+---
+swagger: "2.0"
+info:
+  description: "This api service served to scraper administrator and reader scraper services"
+  version: "1.0.0"
+  title: "Reader Scraper Admin API"
+  contact:
+    name: "Gorillab"
+    url: "https://gorillab.co/"
+    email: "hello@gorillab.co"
+host: "localhost:3001"
+basePath: "/api/v1"
+tags:
+- name: "scrapers"
+  description: "Scraper module"
+- name: "logs"
+  description: "Log module"
+schemes:
+- "http"
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /scrapers:
+    get:
+      tags:
+      - "scrapers"
+      summary: "Returns all scrapers available in the database"
+      operationId: "getScrapers"
+      parameters:
+      - name: "sort"
+        in: "query"
+        description: "Sort the list of scrapers by property"
+        required: false
+        type: "string"
+        enum:
+        - "title"
+      - name: "limit"
+        in: "query"
+        description: "Limit number of scrapers return from server"
+        required: false
+        type: "integer"
+        default: 25
+        maximum: 100
+        minimum: 1
+        format: "int32"
+      - name: "page"
+        in: "query"
+        description: "How many rows to skip"
+        required: false
+        type: "integer"
+        default: 0
+        maximum: 100
+        minimum: 0
+        format: "int32"
+      - name: "query"
+        in: "query"
+        description: "Keywords to search"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Scraper"
+        default:
+          description: "error operation"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+            - AdminSecurity: []
+  /scrapers/register:
+    post:
+      tags:
+      - "scrapers"
+      summary: "Register a new scraper"
+      operationId: "register"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/Scraper"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Scraper"
+        default:
+          description: "error operation"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+        - api_key: []
+  /scrapers/{id}/createPosts:
+    post:
+      tags:
+      - "scrapers"
+      summary: "Create posts which responses from result of scrapers"
+      operationId: "createPosts"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Scraper id to create posts"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Post"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Response_200"
+        default:
+          description: "error operation"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+        - api_key: []
+  /logs:
+    get:
+      tags:
+      - "logs"
+      summary: "Returns all logs available in the database"
+      operationId: "getLogs"
+      parameters:
+      - name: "sort"
+        in: "query"
+        description: "Sort the list of logs by property"
+        required: false
+        type: "string"
+        enum:
+        - "title"
+      - name: "limit"
+        in: "query"
+        description: "Limit number of logs return from server"
+        required: false
+        type: "integer"
+        default: 25
+        maximum: 100
+        minimum: 1
+        format: "int32"
+      - name: "page"
+        in: "query"
+        description: "How many rows to skip"
+        required: false
+        type: "integer"
+        default: 0
+        maximum: 100
+        minimum: 0
+        format: "int32"
+      - name: "query"
+        in: "query"
+        description: "Keywords to search"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Log"
+        default:
+          description: "error operation"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+            - AdminSecurity: []
+securityDefinitions:
+  AdminSecurity:
+    type: "basic"
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+definitions:
+  Scraper:
+    type: "object"
+    required:
+    - "name"
+    - "apiUrl"
+    - "source"
+    - "frequency"
+    properties:
+      id:
+        type: "string"
+        description: "Id for the scraper"
+      name:
+        type: "string"
+        description: "Name for the scraper"
+      frequency:
+        type: "string"
+        description: "Frequency for the scraper"
+      apiUrl:
+        type: "string"
+        description: "Api url for the scraper"
+      source:
+        type: "object"
+        description: "Source for the scraper"
+        $ref: "#/definitions/Source"
+  Source:
+    type: "object"
+    required:
+    - "title"
+    properties:
+      id:
+        type: "string"
+        description: "Id for the source"
+      title:
+        type: "string"
+        description: "Title for the source"
+      url:
+        type: "string"
+        description: "Url for the source"
+  Post:
+    type: "object"
+    required:
+    - "title"
+    - "url"
+    properties:
+      title:
+        type: "string"
+        description: "Title for the post"
+      content:
+        type: "string"
+        description: "Content for the post"
+      image:
+        type: "string"
+        description: "Image path for the post"
+      url:
+        type: "string"
+        description: "Url for the post"
+  Log:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "Id for the log"
+      timestamp:
+        type: "string"
+        format: "date-time"
+        description: "Timestamp for the log"
+      scraper:
+        $ref: '#/definitions/Scraper'
+        description: "Scraper object for the log"
+      type:
+        type: "string"
+        description: "Type for the log"
+        enum:
+        - "requestData"
+        - "responseData"
+        - "register"
+        - "healthCheck"
+      status:
+        type: "string"
+        description: "Status for the log"
+        enum:
+        - "success"
+        - "failed"
+  Error:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
+  Response_200:
+    properties:
+      message:
+        type: "string"

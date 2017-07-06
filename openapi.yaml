@@ -23,57 +23,7 @@ consumes:
 produces:
 - "application/json"
 paths:
-  /scrapers:
-    get:
-      tags:
-      - "scrapers"
-      summary: "Returns all scrapers available in the database"
-      operationId: "getScrapers"
-      parameters:
-      - name: "sort"
-        in: "query"
-        description: "Sort the list of scrapers by property"
-        required: false
-        type: "string"
-        enum:
-        - "title"
-      - name: "limit"
-        in: "query"
-        description: "Limit number of scrapers return from server"
-        required: false
-        type: "integer"
-        default: 25
-        maximum: 100
-        minimum: 1
-        format: "int32"
-      - name: "page"
-        in: "query"
-        description: "How many rows to skip"
-        required: false
-        type: "integer"
-        default: 0
-        maximum: 100
-        minimum: 0
-        format: "int32"
-      - name: "query"
-        in: "query"
-        description: "Keywords to search"
-        required: false
-        type: "string"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Scraper"
-        default:
-          description: "error operation"
-          schema:
-            $ref: "#/definitions/Error"
-      security:
-            - AdminSecurity: []
-  /scrapers/register:
+  /register:
     post:
       tags:
       - "scrapers"
@@ -96,18 +46,13 @@ paths:
             $ref: "#/definitions/Error"
       security:
         - api_key: []
-  /scrapers/{id}/createPosts:
+  /upload:
     post:
       tags:
       - "scrapers"
       summary: "Create posts which responses from result of scrapers"
       operationId: "createPosts"
       parameters:
-      - name: "id"
-        in: "path"
-        description: "Scraper id to create posts"
-        required: true
-        type: "string"
       - in: "body"
         name: "body"
         required: true
@@ -126,56 +71,6 @@ paths:
             $ref: "#/definitions/Error"
       security:
         - api_key: []
-  /logs:
-    get:
-      tags:
-      - "logs"
-      summary: "Returns all logs available in the database"
-      operationId: "getLogs"
-      parameters:
-      - name: "sort"
-        in: "query"
-        description: "Sort the list of logs by property"
-        required: false
-        type: "string"
-        enum:
-        - "title"
-      - name: "limit"
-        in: "query"
-        description: "Limit number of logs return from server"
-        required: false
-        type: "integer"
-        default: 25
-        maximum: 100
-        minimum: 1
-        format: "int32"
-      - name: "page"
-        in: "query"
-        description: "How many rows to skip"
-        required: false
-        type: "integer"
-        default: 0
-        maximum: 100
-        minimum: 0
-        format: "int32"
-      - name: "query"
-        in: "query"
-        description: "Keywords to search"
-        required: false
-        type: "string"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Log"
-        default:
-          description: "error operation"
-          schema:
-            $ref: "#/definitions/Error"
-      security:
-            - AdminSecurity: []
 securityDefinitions:
   AdminSecurity:
     type: "basic"
@@ -240,33 +135,6 @@ definitions:
       url:
         type: "string"
         description: "Url for the post"
-  Log:
-    type: "object"
-    properties:
-      id:
-        type: "string"
-        description: "Id for the log"
-      timestamp:
-        type: "string"
-        format: "date-time"
-        description: "Timestamp for the log"
-      scraper:
-        $ref: '#/definitions/Scraper'
-        description: "Scraper object for the log"
-      type:
-        type: "string"
-        description: "Type for the log"
-        enum:
-        - "requestData"
-        - "responseData"
-        - "register"
-        - "healthCheck"
-      status:
-        type: "string"
-        description: "Status for the log"
-        enum:
-        - "success"
-        - "failed"
   Error:
     type: "object"
     properties:

@@ -1,0 +1,143 @@
+---
+swagger: "2.0"
+info:
+  description: "This api service served to scraper administrator and reader scraper services"
+  version: "1.0.0"
+  title: "Reader Scraper Admin API"
+  contact:
+    name: "Gorillab"
+    url: "https://gorillab.co/"
+    email: "hello@gorillab.co"
+host: "localhost:3001"
+basePath: "/v1"
+tags:
+- name: "scrapers"
+  description: "Scraper module"
+schemes:
+- "http"
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /register:
+    post:
+      tags:
+      - "scrapers"
+      summary: "Register a new scraper"
+      operationId: "register"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/Scraper"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Scraper"
+        default:
+          description: "error operation"
+          schema:
+            $ref: "#/definitions/Error"
+  /upload:
+    post:
+      tags:
+      - "scrapers"
+      summary: "Create posts which responses from result of scrapers"
+      operationId: "upload"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Post"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Response_200"
+        default:
+          description: "error operation"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+        - scraperId: []
+securityDefinitions:
+  scraperId:
+    type: apiKey
+    name: scraperId
+    in: header
+definitions:
+  Scraper:
+    type: "object"
+    required:
+    - "name"
+    - "apiUrl"
+    - "source"
+    - "frequency"
+    properties:
+      id:
+        type: "string"
+        description: "Id for the scraper"
+      name:
+        type: "string"
+        description: "Name for the scraper"
+      frequency:
+        type: "string"
+        description: "Frequency for the scraper"
+      apiUrl:
+        type: "string"
+        description: "Api url for the scraper"
+      source:
+        type: "object"
+        description: "Source for the scraper"
+        $ref: "#/definitions/Source"
+  Source:
+    type: "object"
+    required:
+    - "title"
+    properties:
+      id:
+        type: "string"
+        description: "Id for the source"
+      title:
+        type: "string"
+        description: "Title for the source"
+      url:
+        type: "string"
+        description: "Url for the source"
+  Post:
+    type: "object"
+    required:
+    - "title"
+    - "url"
+    properties:
+      title:
+        type: "string"
+        description: "Title for the post"
+      content:
+        type: "string"
+        description: "Content for the post"
+      image:
+        type: "string"
+        description: "Image path for the post"
+      url:
+        type: "string"
+        description: "Url for the post"
+  Error:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
+  Response_200:
+    properties:
+      message:
+        type: "string"

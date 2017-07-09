@@ -53,7 +53,7 @@ paths:
       tags:
       - "scrapers"
       summary: "Create posts which responses from result of scrapers"
-      operationId: "createPosts"
+      operationId: "upload"
       parameters:
       - in: "body"
         name: "body"

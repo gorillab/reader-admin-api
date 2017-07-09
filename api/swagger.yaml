@@ -10,7 +10,7 @@ info:
     url: "https://gorillab.co/"
     email: "hello@gorillab.co"
 host: "localhost:3001"
-basePath: "/api/v1"
+basePath: "/v1"
 tags:
 - name: "scrapers"
   description: "Scraper module"

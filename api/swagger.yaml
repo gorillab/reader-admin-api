@@ -1,7 +1,8 @@
 ---
 swagger: "2.0"
 info:
-  description: "This api service served to scraper administrator and reader scraper services"
+  description: "This api service served to scraper administrator and reader scraper\
+    \ services"
   version: "1.0.0"
   title: "Reader Scraper Admin API"
   contact:
@@ -45,7 +46,8 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       security:
-        - api_key: []
+      - api_key: []
+      x-swagger-router-controller: "Scrapers"
   /upload:
     post:
       tags:
@@ -70,22 +72,23 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       security:
-        - api_key: []
+      - api_key: []
+      x-swagger-router-controller: "Scrapers"
 securityDefinitions:
   AdminSecurity:
     type: "basic"
   api_key:
-    type: apiKey
-    name: api_key
-    in: header
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
 definitions:
   Scraper:
     type: "object"
     required:
-    - "name"
     - "apiUrl"
-    - "source"
     - "frequency"
+    - "name"
+    - "source"
     properties:
       id:
         type: "string"
@@ -100,7 +103,6 @@ definitions:
         type: "string"
         description: "Api url for the scraper"
       source:
-        type: "object"
         description: "Source for the scraper"
         $ref: "#/definitions/Source"
   Source:

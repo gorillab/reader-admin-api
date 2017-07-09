@@ -1,4 +1,3 @@
----
 swagger: "2.0"
 info:
   description: "This api service served to scraper administrator and reader scraper\
@@ -71,8 +70,6 @@ paths:
       - scraperId: []
       x-swagger-router-controller: "Scrapers"
 securityDefinitions:
-  AdminSecurity:
-    type: "basic"
   scraperId:
     type: "apiKey"
     name: "scraperId"

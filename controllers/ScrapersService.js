@@ -1,4 +1,4 @@
-export const createPosts = (req, res) => {
+export const upload = (req, res) => {
   const examples = {};
   examples['application/json'] = {
     message: 'aeiou',

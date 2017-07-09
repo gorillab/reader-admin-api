@@ -13,8 +13,6 @@ basePath: "/v1"
 tags:
 - name: "scrapers"
   description: "Scraper module"
-- name: "logs"
-  description: "Log module"
 schemes:
 - "http"
 - "https"
@@ -44,8 +42,6 @@ paths:
           description: "error operation"
           schema:
             $ref: "#/definitions/Error"
-      security:
-        - api_key: []
   /upload:
     post:
       tags:
@@ -70,13 +66,11 @@ paths:
           schema:
             $ref: "#/definitions/Error"
       security:
-        - api_key: []
+        - scraperId: []
 securityDefinitions:
-  AdminSecurity:
-    type: "basic"
-  api_key:
+  scraperId:
     type: apiKey
-    name: api_key
+    name: scraperId
     in: header
 definitions:
   Scraper:

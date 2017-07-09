@@ -5,6 +5,20 @@ node_js:
   - 7
   - 8
 
+services:
+  - mongodb
+
+install:
+  - yarn
+
+cache:
+  yarn: true
+  directories:
+  - node_modules
+
+script:
+  - yarn build
+
 notifications:
   email: false
   slack:

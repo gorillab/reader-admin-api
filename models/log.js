@@ -35,4 +35,4 @@ logSchema.statics = {
   },
 };
 
-export default Mongoose.model('Scraper', logSchema);
+export default Mongoose.model('Log', logSchema);

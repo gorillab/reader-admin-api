@@ -25,6 +25,20 @@ const scraperSchema = new Mongoose.Schema({
   },
 });
 
+scraperSchema.method({
+  securedInfo() {
+    const { _id, name, apiUrl, frequency, source } = this;
+
+    return {
+      id: _id,
+      name,
+      apiUrl,
+      frequency,
+      source,
+    };
+  },
+});
+
 
 scraperSchema.statics = {
   list({ query, page, sort, limit, select }) {
@@ -37,4 +51,4 @@ scraperSchema.statics = {
   },
 };
 
-export default Mongoose.model('Swagger', scraperSchema);
+export default Mongoose.model('Scraper', scraperSchema);

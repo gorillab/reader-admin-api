@@ -9,6 +9,14 @@ import Log from '../models/log';
 const scraperJobs = new Map();
 
 // private functions
+const logging = ({ scraper, type, status }) => {
+  const log = new Log({
+    scraper,
+    type,
+    status,
+  });
+  log.createByUser();
+};
 const addCronJob = ({ _id, frequency, apiUrl }) => {
   if (scraperJobs.has(_id.toString())) {
     scraperJobs.get(_id.toString()).stop();
@@ -19,21 +27,17 @@ const addCronJob = ({ _id, frequency, apiUrl }) => {
     try {
       await rp(`${apiUrl}/scrape`);
 
-      const log = new Log({
+      logging({
         scraper: _id,
         type: 'requestData',
         status: 'success',
       });
-
-      log.createByUser();
     } catch (err) {
-      const log = new Log({
+      logging({
         scraper: _id,
         type: 'requestData',
         status: 'failed',
       });
-
-      log.createByUser();
     }
   }, null, true, 'America/Los_Angeles'));
 };
@@ -54,22 +58,19 @@ const addCronJob = ({ _id, frequency, apiUrl }) => {
         try {
           await rp(`${apiUrl}/health`);
 
-          const log = new Log({
+          logging({
             scraper: _id,
             type: 'healthCheck',
             status: 'success',
           });
-
-          log.createByUser();
         } catch (err) {
           console.log(err);
-          const log = new Log({
+
+          logging({
             scraper: _id,
             type: 'healthCheck',
             status: 'failed',
           });
-
-          log.createByUser();
         }
       });
     } catch (err) {
@@ -112,13 +113,11 @@ export const upload = ({ swagger }, res) => {
   });
 
   // create log
-  const log = new Log({
+  logging({
     scraper: '5964d01e5bb227eab0fb7945',
     type: 'responseData',
     status: 'success',
   });
-
-  log.createByUser();
 
   res.json({
     message: 'Done',
@@ -182,13 +181,11 @@ export const register = async (req, res, next) => {
   addCronJob(req.scraper);
 
   // create log
-  const log = new Log({
+  logging({
     scraper: req.scraper._id,
     type: 'register',
     status: 'success',
   });
-
-  log.createByUser();
 
   req.scraper = req.scraper.securedInfo();
   req.scraper.source = req.source.securedInfo();

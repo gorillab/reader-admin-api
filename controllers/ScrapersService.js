@@ -64,8 +64,6 @@ const addCronJob = ({ _id, frequency, apiUrl }) => {
             status: 'success',
           });
         } catch (err) {
-          console.log(err);
-
           logging({
             scraper: _id,
             type: 'healthCheck',
@@ -146,7 +144,7 @@ export const register = async (req, res, next) => {
         url: args.source.url,
       }).updateByUser();
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
@@ -162,7 +160,7 @@ export const register = async (req, res, next) => {
 
       await req.scraper.createByUser();
     } catch (err) {
-      next(err);
+      return next(err);
     }
   } else {
     try {
@@ -174,7 +172,7 @@ export const register = async (req, res, next) => {
         source: req.source._id,
       }).updateByUser();
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 

@@ -1,4 +1,6 @@
 import Mongoose from 'mongoose';
+import HttpStatus from 'http-status';
+import APIError from '../helpers/APIError';
 
 const Schema = Mongoose.Schema;
 
@@ -41,6 +43,11 @@ scraperSchema.method({
 
 
 scraperSchema.statics = {
+  async get(id) {
+    const source = await this.findById(id).exec();
+
+    return source || new APIError('No such source exists!', HttpStatus.NOT_FOUND, true);
+  },
   list({ query, page, sort, limit, select }) {
     return this.find(query || {})
     .sort(sort || '-created.at')

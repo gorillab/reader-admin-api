@@ -25,7 +25,7 @@ const addCronJob = ({ _id, frequency, apiUrl }) => {
 
   scraperJobs.set(_id.toString(), new CronJob(frequency, async () => { // eslint-disable-line
     try {
-      await rp(`${apiUrl}/scrape`);
+      await rp(`${apiUrl}/fetch`);
 
       logging({
         scraper: _id,
@@ -99,15 +99,24 @@ const addCronJob = ({ _id, frequency, apiUrl }) => {
 export const upload = ({ swagger }, res) => {
   const posts = swagger.params.body.value;
 
-  posts.forEach(({ title, content, image, url }) => {
-    const newPost = new Post({
-      title,
-      content,
-      image,
-      url,
+  posts.forEach(async ({ title, content, image, url, host, path }) => {
+    const post = await Post.findOne({
+      isDeleted: false,
+      host,
+      path,
     });
+    if (!post) {
+      const newPost = new Post({
+        title,
+        content,
+        image,
+        url,
+        host,
+        path,
+      });
 
-    newPost.createByUser();
+      newPost.createByUser();
+    }
   });
 
   // create log

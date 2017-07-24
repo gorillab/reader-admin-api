@@ -48,6 +48,16 @@ const postSchema = new Mongoose.Schema({
       default: 0,
     },
   },
+  host: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  path: {
+    type: String,
+    trim: true,
+    required: true,
+  },
 });
 
 postSchema.method({

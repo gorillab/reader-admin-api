@@ -34,6 +34,7 @@ sourceSchema.statics = {
     if (!source) {
       throw new APIError('No such source exists!', HttpStatus.NOT_FOUND, true);
     }
+    return source;
   },
   list({ query, page, sort, limit, select }) {
     return this.find(query || {})

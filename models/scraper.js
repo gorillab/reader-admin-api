@@ -1,4 +1,6 @@
 import Mongoose from 'mongoose';
+import HttpStatus from 'http-status';
+import APIError from '../helpers/APIError';
 
 const Schema = Mongoose.Schema;
 
@@ -25,8 +27,27 @@ const scraperSchema = new Mongoose.Schema({
   },
 });
 
+scraperSchema.method({
+  securedInfo() {
+    const { _id, name, apiUrl, frequency, source } = this;
+
+    return {
+      id: _id,
+      name,
+      apiUrl,
+      frequency,
+      source,
+    };
+  },
+});
+
 
 scraperSchema.statics = {
+  async get(id) {
+    const source = await this.findById(id).exec();
+
+    return source || new APIError('No such source exists!', HttpStatus.NOT_FOUND, true);
+  },
   list({ query, page, sort, limit, select }) {
     return this.find(query || {})
     .sort(sort || '-created.at')
@@ -37,4 +58,4 @@ scraperSchema.statics = {
   },
 };
 
-export default Mongoose.model('Swagger', scraperSchema);
+export default Mongoose.model('Scraper', scraperSchema);

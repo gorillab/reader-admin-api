@@ -19,6 +19,26 @@ cache:
 script:
   - yarn build
 
+deploy:
+  - provider: heroku
+    api_key: $HEROKU_API_KEY
+    skip_cleanup: true
+    app: glab-staging-reader-admin
+    on:
+      branch: master
+      node: '8'
+    run:
+      - yarn serve
+  - provider: heroku
+    api_key: $HEROKU_API_KEY
+    skip_cleanup: true
+    app: glab-reader-admin
+    on:
+      tags: true
+      node: '8'
+    run:
+      - yarn serve
+
 notifications:
   email: false
   slack:

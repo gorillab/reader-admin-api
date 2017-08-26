@@ -49,7 +49,7 @@ Mongoose.connection.on('open', () => {
     // Init the server
     const app = Express();
     // Use gorillab health check
-    app.get('/health', Health);
+    app.get('/health', Health());
     app.use(Logger('common'));
     app.use(BodyParser.json({ limit: '1mb' }));
     app.use(BodyParser.urlencoded({ extended: true }));

@@ -11,6 +11,7 @@ import BodyParser from 'body-parser';
 import HttpStatus from 'http-status';
 import bluebird from 'bluebird';
 import { config } from 'dotenv';
+import Health from 'gorillab-health';
 
 import APIError from './helpers/APIError';
 import mongooseDefaultFields from './middlewares/mongooseDefaultFields';
@@ -47,6 +48,7 @@ Mongoose.connection.on('open', () => {
   SwaggerTools.initializeMiddleware(Jsyaml.safeLoad(Fs.readFileSync(Path.join(__dirname, '/api/swagger.yaml'), 'utf8')), (middleware) => {
     // Init the server
     const app = Express();
+    app.use(Health());
     app.use(Logger('common'));
     app.use(BodyParser.json({ limit: '1mb' }));
     app.use(BodyParser.urlencoded({ extended: true }));

@@ -72,6 +72,7 @@ const addCronJob = ({ _id, frequency, apiUrl }) => {
         }
       });
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log(err);
     }
   }, 10000);
@@ -92,6 +93,7 @@ const addCronJob = ({ _id, frequency, apiUrl }) => {
       addCronJob(scraper);
     });
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.log(err);
   }
 })();

@@ -6,14 +6,8 @@ import Jsyaml from 'js-yaml';
 import Express from 'express';
 import Mongoose from 'mongoose';
 import IncludeAll from 'include-all';
-import Passport from 'passport';
 import Logger from 'morgan';
 import BodyParser from 'body-parser';
-import CookieParser from 'cookie-parser';
-import ExpressSession from 'express-session';
-import Cors from 'cors';
-import Helmet from 'helmet';
-import ConnectMongo from 'connect-mongo';
 import HttpStatus from 'http-status';
 import bluebird from 'bluebird';
 import { config } from 'dotenv';
@@ -55,29 +49,8 @@ Mongoose.connection.on('open', () => {
     // Init the server
     const app = Express();
     app.use(Logger('common'));
-    app.use(CookieParser());
     app.use(BodyParser.json({ limit: '1mb' }));
     app.use(BodyParser.urlencoded({ extended: true }));
-    app.use(ExpressSession({
-      name: process.env.APP_NAME,
-      secret: process.env.SESSION_SECRET,
-      cookie: {
-        path: '/',
-        httpOnly: true,
-        secure: false,
-        maxAge: 86400000,
-      },
-      resave: false,
-      saveUninitialized: true,
-      rolling: true,
-      store: new (ConnectMongo(ExpressSession))({
-        mongooseConnection: Mongoose.connection,
-      }),
-    }));
-    app.use(Passport.initialize());
-    app.use(Passport.session());
-    app.use(Cors());
-    app.use(Helmet());
     app.use(middleware.swaggerMetadata());                        // Interpret Swagger resources
     app.use(middleware.swaggerValidator());                       // Validate Swagger requests
     app.use(middleware.swaggerRouter({                            // Route validated requests

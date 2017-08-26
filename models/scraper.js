@@ -44,9 +44,11 @@ scraperSchema.method({
 
 scraperSchema.statics = {
   async get(id) {
-    const source = await this.findById(id).exec();
-
-    return source || new APIError('No such source exists!', HttpStatus.NOT_FOUND, true);
+    const scraper = await this.findById(id).exec();
+    if (!scraper) {
+      throw new APIError('No such scraper exists!', HttpStatus.NOT_FOUND, true);
+    }
+    return scraper;
   },
   list({ query, page, sort, limit, select }) {
     return this.find(query || {})

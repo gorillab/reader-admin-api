@@ -98,8 +98,16 @@ const addCronJob = ({ _id, frequency, apiUrl }) => {
   }
 })();
 
-export const upload = ({ swagger }, res) => {
+export const upload = async (req, res, next) => {
+  const scraperId = req.headers['scraper-id'];
+  const swagger = req.swagger;
   const posts = swagger.params.body.value;
+
+  try {
+    req.scraper = await Scraper.get(scraperId);
+  } catch (err) {
+    return next(err);
+  }
 
   posts.forEach(async ({ title, content, image, url, host, path }) => {
     const post = await Post.findOne({
@@ -115,6 +123,7 @@ export const upload = ({ swagger }, res) => {
         url,
         host,
         path,
+        source: req.scraper.source,
       });
 
       newPost.createByUser();
@@ -123,12 +132,12 @@ export const upload = ({ swagger }, res) => {
 
   // create log
   logging({
-    scraper: '5964d01e5bb227eab0fb7945',
+    scraper: req.scraper._id,
     type: 'responseData',
     status: 'success',
   });
 
-  res.json({
+  return res.json({
     message: 'Done',
   });
 };

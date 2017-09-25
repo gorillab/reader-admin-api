@@ -27,7 +27,6 @@
   "dependencies": {
     "async": "^2.5.0",
     "babel-runtime": "^6.26.0",
-    "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "cron": "^1.2.1",
     "dotenv": "^4.0.0",
@@ -40,8 +39,8 @@
     "mongoose-deep-populate": "^3.0.0",
     "mongoose-unique-validator": "1.0.2",
     "morgan": "^1.8.2",
+    "node-fetch": "^1.7.3",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1",
     "swagger-tools": "0.10.1"
   },
   "devDependencies": {

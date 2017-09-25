@@ -9,7 +9,6 @@ import IncludeAll from 'include-all';
 import Logger from 'morgan';
 import BodyParser from 'body-parser';
 import HttpStatus from 'http-status';
-import bluebird from 'bluebird';
 import { config } from 'dotenv';
 import Health from 'gorillab-health';
 
@@ -23,7 +22,6 @@ import mongooseDocMethodsOverride from './middlewares/mongooseDocMethodsOverride
 config();
 
 // Mongoose config
-Mongoose.Promise = bluebird;
 Mongoose.plugin(mongooseDefaultFields);
 Mongoose.plugin(mongooseDefaultIndexes);
 Mongoose.plugin(mongooseDocExtend);
@@ -75,6 +73,9 @@ Mongoose.connection.on('open', () => {
       console.log(`Your server is running at http://${process.env.HOST}:${process.env.PORT}`);        // eslint-disable-line no-console
       console.log(`Swagger-ui is available at http://${process.env.HOST}:${process.env.PORT}/docs`);  // eslint-disable-line no-console
     });
+
+    // Start crons
+    require('./bin').default();         //eslint-disable-line
   });
 });
 

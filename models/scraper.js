@@ -25,11 +25,17 @@ const scraperSchema = new Mongoose.Schema({
     ref: 'Source',
     required: true,
   },
+  status: {
+    type: String,
+    required: true,
+    default: 'failed',
+    enum: ['success', 'failed'],
+  },
 });
 
 scraperSchema.method({
   securedInfo() {
-    const { _id, name, apiUrl, frequency, source } = this;
+    const { _id, name, apiUrl, frequency, source, status } = this;
 
     return {
       id: _id,
@@ -37,6 +43,7 @@ scraperSchema.method({
       apiUrl,
       frequency,
       source,
+      status,
     };
   },
 });
@@ -49,6 +56,9 @@ scraperSchema.statics = {
       throw new APIError('No such scraper exists!', HttpStatus.NOT_FOUND, true);
     }
     return scraper;
+  },
+  getOne(query) {
+    return this.findOne(query).exec();
   },
   list({ query, page, sort, limit, select }) {
     return this.find(query || {})

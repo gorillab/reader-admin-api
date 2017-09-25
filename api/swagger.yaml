@@ -96,22 +96,8 @@ definitions:
         type: "string"
         description: "Api url for the scraper"
       source:
+        type: "string"
         description: "Source for the scraper"
-        $ref: "#/definitions/Source"
-  Source:
-    type: "object"
-    required:
-    - "title"
-    properties:
-      id:
-        type: "string"
-        description: "Id for the source"
-      title:
-        type: "string"
-        description: "Title for the source"
-      url:
-        type: "string"
-        description: "Url for the source"
   Post:
     type: "object"
     required:

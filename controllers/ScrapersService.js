@@ -79,7 +79,7 @@ export const register = async (req, res, next) => {
         // update
         await req.scraper.extend({
           name: args.name,
-          apiUrl: args.apiUrl,
+          apiUrl: `${req.protocol}://${req.get('host')}${args.apiUrl}`,
           frequency: args.frequency,
           source: req.source._id,
         }).updateByUser();
@@ -88,7 +88,7 @@ export const register = async (req, res, next) => {
       // create one
       req.scraper = new Scraper({
         name: args.name,
-        apiUrl: args.apiUrl,
+        apiUrl: `${req.protocol}://${req.get('host')}${args.apiUrl}`,
         frequency: args.frequency,
         source: req.source._id,
       });

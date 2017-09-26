@@ -7,12 +7,13 @@ import Scraper from '../models/scraper';
 const scraperJobs = new Map();
 
 const addCronJob = ({ _id, frequency, apiUrl }) => {
-  if (scraperJobs.has(_id.toString())) {
-    scraperJobs.get(_id.toString()).stop();
-    scraperJobs.delete(_id.toString());
+  const scraperId = _id.toString();
+  if (scraperJobs.has(scraperId)) {
+    scraperJobs.get(scraperId).stop();
+    scraperJobs.delete(scraperId);
   }
 
-  scraperJobs.set(_id.toString(), new CronJob(frequency, async () => { // eslint-disable-line
+  scraperJobs.set(scraperId, new CronJob(frequency, async () => { // eslint-disable-line
     try {
       await Fetch(`${apiUrl}/fetch`);
 
@@ -29,6 +30,14 @@ const addCronJob = ({ _id, frequency, apiUrl }) => {
       });
     }
   }, null, true, 'America/Los_Angeles'));
+};
+
+const removeCronJob = ({ _id }) => {
+  const scraperId = _id.toString();
+  if (scraperJobs.has(scraperId)) {
+    scraperJobs.get(scraperId).stop();
+    scraperJobs.delete(scraperId);
+  }
 };
 
 // health cron
@@ -51,8 +60,11 @@ const healthCheck = () => {
         };
         try {
           await Fetch(`${scraper.apiUrl}/health`);
+          record.status = 'success';
         } catch (err) {
           console.log(err);
+          // remove cron
+          removeCronJob(scraper);
         }
         logging(record);
 

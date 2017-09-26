@@ -31,7 +31,7 @@
     "cron": "^1.2.1",
     "dotenv": "^4.0.0",
     "express": "^4.15.3",
-    "gorillab-health": "^1.0.1",
+    "@gorillab/health": "^1.0.0",
     "http-status": "^1.0.1",
     "include-all": "^4.0.3",
     "js-yaml": "^3.3.0",

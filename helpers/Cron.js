@@ -6,7 +6,7 @@ import Scraper from '../models/scraper';
 
 const scraperJobs = new Map();
 
-const addCronJob = ({ _id, frequency, apiUrl }) => {
+const addCronJob = ({ _id, frequency, baseUrl, version }) => {
   const scraperId = _id.toString();
   if (scraperJobs.has(scraperId)) {
     scraperJobs.get(scraperId).stop();
@@ -15,7 +15,7 @@ const addCronJob = ({ _id, frequency, apiUrl }) => {
 
   scraperJobs.set(scraperId, new CronJob(frequency, async () => { // eslint-disable-line
     try {
-      await Fetch(`${apiUrl}/fetch`);
+      await Fetch(`${baseUrl}/${version}/fetch`);
 
       logging({
         scraper: _id,
@@ -59,7 +59,7 @@ const healthCheck = () => {
           status: 'failed',
         };
         try {
-          await Fetch(`${scraper.apiUrl}/health`);
+          await Fetch(`${scraper.baseUrl}/${scraper.version}/health`);
           record.status = 'success';
         } catch (err) {
           console.log(err);

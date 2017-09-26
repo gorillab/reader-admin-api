@@ -10,7 +10,7 @@ import Logger from 'morgan';
 import BodyParser from 'body-parser';
 import HttpStatus from 'http-status';
 import { config } from 'dotenv';
-import Health from 'gorillab-health';
+import Health from '@gorillab/health';
 
 import APIError from './helpers/APIError';
 import mongooseDefaultFields from './middlewares/mongooseDefaultFields';

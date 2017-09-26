@@ -10,7 +10,12 @@ const scraperSchema = new Mongoose.Schema({
     required: true,
     trim: true,
   },
-  apiUrl: {
+  baseUrl: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  version: {
     type: String,
     required: true,
     trim: true,
@@ -35,12 +40,13 @@ const scraperSchema = new Mongoose.Schema({
 
 scraperSchema.method({
   securedInfo() {
-    const { _id, name, apiUrl, frequency, source, status } = this;
+    const { _id, name, baseUrl, version, frequency, source, status } = this;
 
     return {
       id: _id,
       name,
-      apiUrl,
+      baseUrl,
+      version,
       frequency,
       source,
       status,

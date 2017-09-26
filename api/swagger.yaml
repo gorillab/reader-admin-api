@@ -78,10 +78,11 @@ definitions:
   Scraper:
     type: "object"
     required:
-    - "apiUrl"
-    - "frequency"
     - "name"
+    - "frequency"
     - "source"
+    - "baseUrl"
+    - "version"
     properties:
       id:
         type: "string"
@@ -92,12 +93,15 @@ definitions:
       frequency:
         type: "string"
         description: "Frequency for the scraper"
-      apiUrl:
-        type: "string"
-        description: "Api url for the scraper"
       source:
         type: "string"
         description: "Source for the scraper"
+      baseUrl:
+        type: "string"
+        description: "Scraper base url"
+      version:
+        type: "string"
+        description: "Scraper version"
   Post:
     type: "object"
     required:

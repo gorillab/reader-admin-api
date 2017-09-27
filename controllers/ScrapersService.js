@@ -63,9 +63,7 @@ const register = async (req, res, next) => {
   req.scraper = req.scraper.securedInfo();
   req.scraper.source = req.source._id;
 
-  return res.json({
-    ok: 1,
-  });
+  return res.send('OK');
 };
 
 const upload = async (req, res, next) => {

@@ -59,9 +59,10 @@ const healthCheck = () => {
           status: 'failed',
         };
         try {
-          await Fetch(`${scraper.baseUrl}/${scraper.version}/health`);
+          await Fetch(`${scraper.baseUrl}/health`);
           record.status = 'success';
         } catch (err) {
+          // eslint-disable-next-line no-console
           console.log(err);
           // remove cron
           removeCronJob(scraper);

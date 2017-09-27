@@ -63,7 +63,7 @@ const register = async (req, res, next) => {
   req.scraper = req.scraper.securedInfo();
   req.scraper.source = req.source._id;
 
-  return res.json(req.scraper);
+  return res.send('OK');
 };
 
 const upload = async (req, res, next) => {
@@ -75,6 +75,7 @@ const upload = async (req, res, next) => {
       baseUrl,
     });
     if (!req.scraper) {
+      // eslint-disable-next-line no-console
       console.log('@scraper not exists');
       return true;
     }

@@ -1,110 +1,83 @@
-import rp from 'request-promise';
-import { CronJob } from 'cron';
+import HttpStatus from 'http-status';
 
+import APIError from '../helpers/APIError';
 import Source from '../models/source';
 import Scraper from '../models/scraper';
 import Post from '../models/post';
-import Log from '../models/log';
+import logging from '../helpers/Log';
+import { addCronJob } from '../helpers/Cron';
 
-const scraperJobs = new Map();
-
-// private functions
-const logging = ({ scraper, type, status }) => {
-  const log = new Log({
-    scraper,
-    type,
-    status,
-  });
-  log.createByUser();
-};
-const addCronJob = ({ _id, frequency, apiUrl }) => {
-  if (scraperJobs.has(_id.toString())) {
-    scraperJobs.get(_id.toString()).stop();
-    scraperJobs.delete(_id.toString());
-  }
-
-  scraperJobs.set(_id.toString(), new CronJob(frequency, async () => { // eslint-disable-line
-    try {
-      await rp(`${apiUrl}/fetch`);
-
-      logging({
-        scraper: _id,
-        type: 'requestData',
-        status: 'success',
-      });
-    } catch (err) {
-      logging({
-        scraper: _id,
-        type: 'requestData',
-        status: 'failed',
-      });
-    }
-  }, null, true, 'America/Los_Angeles'));
-};
-
-// health check
-(() => {
-  setInterval(async () => {
-    try {
-      const query = {
-        isDeleted: false,
-      };
-
-      const scrapers = await Scraper.list({
-        query,
-      });
-
-      scrapers.forEach(async ({ apiUrl, _id }) => {
-        try {
-          await rp(`${apiUrl}/health`);
-
-          logging({
-            scraper: _id,
-            type: 'healthCheck',
-            status: 'success',
-          });
-        } catch (err) {
-          logging({
-            scraper: _id,
-            type: 'healthCheck',
-            status: 'failed',
-          });
-        }
-      });
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err);
-    }
-  }, 10000);
-})();
-
-// cronjob
-(async () => {
+const register = async (req, res, next) => {
+  const args = req.swagger.params.body.value;
+  // validate source
   try {
-    const query = {
-      isDeleted: false,
-    };
-
-    const scrapers = await Scraper.list({
-      query,
-    });
-
-    scrapers.forEach((scraper) => {
-      addCronJob(scraper);
-    });
+    req.source = await Source.get(args.source);
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.log(err);
+    return next(err);
   }
-})();
 
-export const upload = async (req, res, next) => {
-  const scraperId = req.headers['scraper-id'];
-  const swagger = req.swagger;
-  const posts = swagger.params.body.value;
+  // validate scraper
+  try {
+    req.scraper = await Scraper.getOne({
+      baseUrl: args.baseUrl,
+    });
+
+    if (req.scraper) {
+      if (req.scraper.status === 'success') {
+        throw new APIError('Scraper exists!', HttpStatus.CONFLICT, true);
+      } else {
+        // update
+        await req.scraper.extend({
+          name: args.name,
+          baseUrl: args.baseUrl,
+          version: args.version,
+          frequency: args.frequency,
+          source: req.source._id,
+        }).updateByUser();
+      }
+    } else {
+      // create one
+      req.scraper = new Scraper({
+        name: args.name,
+        baseUrl: args.baseUrl,
+        version: args.version,
+        frequency: args.frequency,
+        source: req.source._id,
+      });
+
+      await req.scraper.createByUser();
+    }
+  } catch (err) {
+    return next(err);
+  }
+
+  addCronJob(req.scraper);
+
+  // create log
+  logging({
+    scraper: req.scraper._id,
+    type: 'register',
+    status: 'success',
+  });
+
+  req.scraper = req.scraper.securedInfo();
+  req.scraper.source = req.source._id;
+
+  return res.json(req.scraper);
+};
+
+const upload = async (req, res, next) => {
+  const baseUrl = req.headers['scraper-base-url'];
+  const posts = req.swagger.params.body.value;
 
   try {
-    req.scraper = await Scraper.get(scraperId);
+    req.scraper = await Scraper.getOne({
+      baseUrl,
+    });
+    if (!req.scraper) {
+      console.log('@scraper not exists');
+      return true;
+    }
   } catch (err) {
     return next(err);
   }
@@ -142,71 +115,7 @@ export const upload = async (req, res, next) => {
   });
 };
 
-export const register = async (req, res, next) => {
-  const args = req.swagger.params.body.value;
-
-  if (!args.source.id) {
-    try {
-      req.source = new Source({
-        title: args.source.title,
-        url: args.source.url,
-      });
-
-      await req.source.createByUser();
-    } catch (err) {
-      return next(err);
-    }
-  } else {
-    try {
-      req.source = await Source.get(args.source.id);
-      await req.source.extend({
-        title: args.source.title,
-        url: args.source.url,
-      }).updateByUser();
-    } catch (err) {
-      return next(err);
-    }
-  }
-
-  // create scraper
-  if (!args.id) {
-    try {
-      req.scraper = new Scraper({
-        name: args.name,
-        apiUrl: args.apiUrl,
-        frequency: args.frequency,
-        source: req.source._id,
-      });
-
-      await req.scraper.createByUser();
-    } catch (err) {
-      return next(err);
-    }
-  } else {
-    try {
-      req.scraper = await Scraper.get(args.id);
-      await req.scraper.extend({
-        name: args.name,
-        apiUrl: args.apiUrl,
-        frequency: args.frequency,
-        source: req.source._id,
-      }).updateByUser();
-    } catch (err) {
-      return next(err);
-    }
-  }
-
-  addCronJob(req.scraper);
-
-  // create log
-  logging({
-    scraper: req.scraper._id,
-    type: 'register',
-    status: 'success',
-  });
-
-  req.scraper = req.scraper.securedInfo();
-  req.scraper.source = req.source.securedInfo();
-
-  return res.json(req.scraper);
+export {
+  register,
+  upload,
 };

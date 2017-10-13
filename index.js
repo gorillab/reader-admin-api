@@ -22,6 +22,7 @@ import mongooseDocMethodsOverride from './middlewares/mongooseDocMethodsOverride
 config();
 
 // Mongoose config
+Mongoose.Promise = Promise;
 Mongoose.plugin(mongooseDefaultFields);
 Mongoose.plugin(mongooseDefaultIndexes);
 Mongoose.plugin(mongooseDocExtend);

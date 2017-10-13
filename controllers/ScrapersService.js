@@ -83,12 +83,12 @@ const upload = async (req, res, next) => {
     return next(err);
   }
 
-  posts.forEach(async ({ title, content, image, url, host, path }) => {
+  for (const { title, content, image, url, host, path } of posts) {
     const post = await Post.findOne({
       isDeleted: false,
       host,
       path,
-    });
+    }).exec();
     if (!post) {
       const newPost = new Post({
         title,
@@ -99,10 +99,12 @@ const upload = async (req, res, next) => {
         path,
         source: req.scraper.source,
       });
-
-      newPost.createByUser();
+      await newPost.createByUser();
+    } else {
+      post.created.at = new Date();
+      await post.updateByUser();
     }
-  });
+  }
 
   // create log
   logging({

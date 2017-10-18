@@ -29,7 +29,7 @@ const addCronJob = ({ _id, frequency, baseUrl, version }) => {
         status: 'failed',
       });
     }
-  }, null, true, 'America/Los_Angeles'));
+  }, null, true, 'Asia/Ho_Chi_Minh'));
 };
 
 const removeCronJob = ({ _id }) => {

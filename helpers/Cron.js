@@ -59,8 +59,8 @@ const healthCheck = () => {
           status: 'failed',
         };
         try {
-          await Fetch(`${scraper.baseUrl}/health`);
-          record.status = 'success';
+          const res = await Fetch(`${scraper.baseUrl}/health`);
+          if (res.ok) record.status = 'success';
         } catch (err) {
           // eslint-disable-next-line no-console
           console.log(err);

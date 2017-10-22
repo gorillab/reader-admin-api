@@ -1,6 +1,6 @@
 {
   "name": "reader-scraper-admin-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This api service served to scraper administrator and reader scraper services",
   "author": {
     "name": "Gorillab",

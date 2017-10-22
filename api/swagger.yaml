@@ -2,7 +2,7 @@ swagger: "2.0"
 info:
   description: "This api service served to scraper administrator and reader scraper\
     \ services"
-  version: "1.0.0"
+  version: "1.0.1"
   title: "Reader Scraper Admin API"
   contact:
     name: "Gorillab"

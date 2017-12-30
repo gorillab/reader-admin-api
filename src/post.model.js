@@ -1,6 +1,4 @@
-import Mongoose from 'mongoose';
-import HttpStatus from 'http-status';
-import APIError from '../helpers/APIError';
+const Mongoose = require('./db/mongoose.js');
 
 const Schema = Mongoose.Schema;
 
@@ -77,19 +75,27 @@ postSchema.method({
 });
 
 postSchema.statics = {
-  async get(id) {
-    const post = await this.findById(id).exec();
-
-    return post || new APIError('No such post exists!', HttpStatus.NOT_FOUND, true);
+  getOne({ select = '', query = {}, populate = '' }) {
+    return this.findOne(query)
+    .select(select)
+    .populate(populate);
   },
-  list({ query, page, sort, limit, select }) {
+  list({ query = {}, skip = 0, sort = '-created.at', limit = 0, select = '', populate = '' }) {
     return this.find(query || {})
-    .sort(sort || 'title')
-    .select(select || 'id title content image url source meta')
-    .skip((limit || 0) * (page || 0))
-    .limit(limit || 0)
-    .exec();
+    .sort(sort)
+    .select(select)
+    .skip(skip)
+    .limit(limit)
+    .populate(populate);
   },
 };
 
-export default Mongoose.model('Post', postSchema);
+const initColl = () => {
+  if (Mongoose.models.Post) {
+    return Mongoose.model('Post');
+  } else {
+    return Mongoose.model('Post', postSchema);
+  }
+};
+
+module.exports = initColl();

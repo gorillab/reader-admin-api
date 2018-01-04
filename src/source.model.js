@@ -1,10 +1,19 @@
 const Mongoose = require('./db/mongoose.js');
 
 const sourceSchema = new Mongoose.Schema({
-  title: {
+  name: {
     type: String,
     required: true,
     trim: true,
+  },
+  frequency: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  isActive: {
+    type: Boolean,
+    default: false,
   },
   url: {
     type: String,
@@ -15,11 +24,14 @@ const sourceSchema = new Mongoose.Schema({
 
 sourceSchema.method({
   securedInfo() {
-    const { _id, title, url } = this;
+    const { _id, name, version, frequency, isActive, url } = this;
 
     return {
       id: _id,
-      title,
+      name,
+      version,
+      frequency,
+      isActive,
       url,
     };
   },

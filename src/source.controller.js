@@ -2,14 +2,14 @@ const { NOT_FOUND, INTERNAL_SERVER_ERROR, OK } = require('http-status-codes');
 const { json } = require('micro');
 
 const arrayDiff = require('./helpers/array-diff');
-const Source = require('./source.model.js');
+const Source = require('./source.model');
 
 const BLACK_LIST = ['isDeleted'];
 
 const getList = async (req, res) => {
   const select = req.query.select
     ? arrayDiff(req.query.select.split(','), BLACK_LIST).join(' ')
-    : 'title url';
+    : 'name frequency isActive url';
   const limit = req.query.limit ? +req.query.limit : 25;
   const {
     page = 0,
@@ -25,7 +25,7 @@ const getList = async (req, res) => {
   if (search) {
     const q = `%${search}%`;
     query.$or = [{
-      title: {
+      name: {
         $like: q,
       },
     }];
@@ -47,10 +47,13 @@ const getList = async (req, res) => {
 
 const getDetails = async (req, res) => {
   const { id: _id } = req.params;
-
-  const source = await Source.getOne({
+  const query = {
     _id,
     isDeleted: false,
+  };
+
+  const source = await Source.getOne({
+    query,
   });
 
   if (!source) {
@@ -64,10 +67,12 @@ const getDetails = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const { title, url } = await json(req);
+  const { name, frequency, isActive, url } = await json(req);
   try {
     const source = new Source({
-      title,
+      name,
+      frequency,
+      isActive,
       url,
     });
 
@@ -84,7 +89,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   const { id: _id } = req.params;
-  const { title, url } = await json(req);
+  const { name, frequency, url, isActive } = await json(req);
 
   const source = await Source.findOne({
     _id,
@@ -100,7 +105,9 @@ const update = async (req, res) => {
 
   try {
     await source.extend({
-      title,
+      name,
+      frequency,
+      isActive,
       url,
     }).updateByUser(req.user);
   } catch (err) {
@@ -139,7 +146,7 @@ const remove = async (req, res) => {
     });
   }
 
-  return res.send(OK, source);
+  return res.send(OK, 'Ok');
 };
 
 module.exports = {

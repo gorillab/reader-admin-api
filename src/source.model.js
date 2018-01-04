@@ -15,6 +15,10 @@ const sourceSchema = new Mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isOfficial: {
+    type: Boolean,
+    default: false,
+  },
   url: {
     type: String,
     required: true,

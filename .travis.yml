@@ -1,41 +1,37 @@
+sudo: required
+
 language: node_js
 
 node_js:
-  - 6
-  - 7
-  - 8
+- 9
 
-services:
-  - mongodb
+env:
+- DOCKER_REPO=gorillab/reader-admin
 
-install:
-  - yarn
+jobs:
+  include:
+  - stage: test
+    install:
+    - yarn
+    script:
+    - yarn test
+  - stage: build
+    services:
+    - docker
+    install:
+    - yarn
+    script:
+    - docker build -t "$DOCKER_REPO" .
+    - if [ ! -z "$TRAVIS_TAG" ]; then docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+      for TAG in {"$TRAVIS_TAG",latest}; do docker tag "$DOCKER_REPO" "$DOCKER_REPO":"$TAG";
+      docker push "$DOCKER_REPO":"$TAG"; done fi
 
 cache:
   yarn: true
   directories:
   - node_modules
 
-script:
-  - yarn build
-
-deploy:
-  - provider: heroku
-    api_key: $HEROKU_API_KEY
-    skip_cleanup: true
-    app: glab-staging-reader-admin
-    on:
-      branch: master
-      node: '8'
-  - provider: heroku
-    api_key: $HEROKU_API_KEY
-    skip_cleanup: true
-    app: glab-reader-admin
-    on:
-      tags: true
-      node: '8'
-
 notifications:
   email: false
   slack:
-    secure: "B826Y3eS2uMMtiUNCYEbmr0ue5UN6WJ8R5SLCkHo9FATwFOdLYwF8IWLYMRIrWny6qeB2RCQIyQIHQgm+7YqzF+A0nGxQOfTBf3vy76iOxP4iDOmixbULe3oMkdOVgxkopqtR4IOmoXLwcSRRCj6nhMGI4DFwEMsw5lgQDFDPrbe5cUkRk0PTxXZ+LX5pWPi/NX5PXW+dijZCGTPCW3+Q61+zyr7nwc8HqN/EcIww1nH4sH5F05XEMp+iwDo638SWhLXEbSfpI7qDFO6Rwk0A2tpmrhfloqqflxTg5OL2LiE0p9uKNsuTRhhNJLM/sTkL94IHIlGc+XFX42QUwZNOWioMC9qPatUEQUA2hPVNpZ7h+/4IJ64FB3fQDzRFh4RwUJnbBbmTkAwcjPdmHecUhDwq+PoryvFlq2gDbwys6V/p0HZfMTO/Ik2zz10mM3B4BOSEFxq4gqamu0kD7SlXE0flDyqVF4lilUfczz/EtC+GyuIdyvLrRK6hockvBP3uwsn5SXQi9WIaJp7xiiSid9bM5Ott3lPagsDp/uGwTfyDWM1nPoALduAawOrA1EHuKt7/QxhyVxznAGo8sgVs5xZtDtzieSydXjFMoUIx8RMzwEdfJ5bFOtOz83KGlfwWI1qdd0oa5Gf91uZdHjbRYH/0HIwHfLt7LfTDxJQsB4="
+    secure: YMnOhCi7/jlQNqtihVqquf+RHNlHNZFSPi8/6pja7I+rilfEkNzBlH4qLh3lPsG53OlihEO0c53X6KdFZ5judV7FkpRmSDiHtSpmNDHzbkowjzU2WUXHbEpT9gqwF1kxnLcD3bb2PZltmCjGH0ru+gNmOCBf0OVZf4sR1vblHcp9IMslEsk0NTZRMgqB11CZ0n4kkG/zrQXdgYXVIHdK+nzLnZAO2u3mHVQwMCWHrcC/hZPrtqssz0xsiyEdSF47pMCp4sOchbIL8XDP0LOo0o2ZwynanPGNES9mfD/FmSZqT69dT6UGWBw6bZGAuaPkvqiMmovB3Nr3jM+ebSgaf5GYKGN++rrgW07Ba//oJbQcJ4r2xg+VpJ8cT5Je2ulOZSHoWXX9dNfW2q+PkqsuB2GUISzjRKA5VEnOFHFyb6LVqfdIWQvfc6wuAm45fD+ML6bYhn48dI/X845lE8EgHYl3PqUmBMaHzsa/Y3db+c2pIq98ql3RPLNAlLtzwbAmU1PVmnrmmM+MmGbngAxTAT4TUZ55DANP6eimlJbpl8mAF2KEjBIeI0tUpYxFWln6hbOMqo0CsLyoYGnPOspbHzkiTryV5UrJwKUypiK1K0Yy2+GfSHROLoS4mEV2vsczW77RoLSyhbOYk9k2OKKE5Xm3P+MA0wktExLKQ2QUxho=

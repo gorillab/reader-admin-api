@@ -1,7 +1,7 @@
 {
-  "name": "reader-scraper-admin",
-  "description": "This api service served to scraper administrator and reader scraper services",
-  "version": "2.0.0",
+  "name": "reader-admin",
+  "description": "Reader admin",
+  "version": "1.0.0",
   "author": {
     "name": "Gorillab",
     "email": "hello@gorillab.co",
@@ -13,13 +13,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gorillab/create-micro.git"
+    "url": "https://github.com/gorillab/reader-admin.git"
   },
   "scripts": {
-    "lint": "eslint . --ignore-path .gitignore",
-    "dev": "micro-dev -p $PORT",
-    "start": "micro -p $PORT",
-    "test": "micro-dev ./test/app.js -p 3000"
+    "test": "eslint . --ignore-path .gitignore",
+    "start": "micro-dev -p 9000",
+    "serve": "micro -p $PORT"
   },
   "dependencies": {
     "dotenv": "^4.0.0",

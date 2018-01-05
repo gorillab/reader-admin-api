@@ -56,10 +56,9 @@ typings/
 
 package-lock.json
 
-dist
+build
 
 # dotenv environment variables file
 .env
 
 .yarnclean
-yarn.lock

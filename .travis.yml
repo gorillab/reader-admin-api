@@ -21,7 +21,6 @@ jobs:
     install:
     - yarn
     script:
-    - yarn build
     - docker build -t "$DOCKER_REPO" .
     - if [ ! -z "$TRAVIS_TAG" ]; then docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
       for TAG in {"$TRAVIS_TAG",latest}; do docker tag "$DOCKER_REPO" "$DOCKER_REPO":"$TAG";

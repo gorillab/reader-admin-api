@@ -1,7 +1,7 @@
 const Mongoose = require('./db/mongoose.js');
 
 const sourceSchema = new Mongoose.Schema({
-  name: {
+  title: {
     type: String,
     required: true,
     trim: true,
@@ -28,11 +28,11 @@ const sourceSchema = new Mongoose.Schema({
 
 sourceSchema.method({
   securedInfo() {
-    const { _id, name, version, frequency, isActive, url } = this;
+    const { _id, title, version, frequency, isActive, url } = this;
 
     return {
       id: _id,
-      name,
+      title,
       version,
       frequency,
       isActive,

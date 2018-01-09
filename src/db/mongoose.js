@@ -11,10 +11,19 @@ Mongoose.plugin(mongooseDefaultIndexes);
 Mongoose.plugin(mongooseDocExtend);
 Mongoose.plugin(mongooseDocMethodsOverride);
 
+const options = {
+  server: {
+    auto_reconnect: true,
+    socketOptions: {
+      keepAlive: 1,
+    },
+  },
+};
+
 try {
-  Mongoose.connect(process.env.MONGO_URL);          // starting a db connection
+  Mongoose.connect(process.env.MONGO_URL, options);          // starting a db connection
 } catch (err) {
-  Mongoose.createConnection(process.env.MONGO_URL); // starting another db connection
+  Mongoose.createConnection(process.env.MONGO_URL, options); // starting another db connection
 }
 
 module.exports = Mongoose;

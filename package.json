@@ -1,6 +1,6 @@
 {
-  "name": "reader-admin",
-  "description": "Reader admin",
+  "name": "reader-admin-api",
+  "description": "Reader admin api service",
   "version": "1.0.0",
   "author": {
     "name": "Gorillab",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gorillab/reader-admin.git"
+    "url": "https://github.com/gorillab/reader-admin-api.git"
   },
   "scripts": {
     "test": "eslint . --ignore-path .gitignore",

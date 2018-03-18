@@ -1,26 +1,37 @@
 sudo: required
+
 language: node_js
+
 node_js:
-    - 9
+- 9
+
 env:
-    - DOCKER_REPO=gorillab/reader-admin-api
+- DOCKER_REPO=gorillab/reader-admin-api
+
 jobs:
-    include:
-        -
-            stage: test
-            install: [yarn]
-            script: ['yarn test']
-        -
-            stage: build
-            services: [docker]
-            install: [yarn]
-            script: ['docker build -t "$DOCKER_REPO" .', "if [ ! -z \"$TRAVIS_TAG\" ]; then docker login -u \"$DOCKER_USERNAME\" -p \"$DOCKER_PASSWORD\";\nfor TAG in {\"$TRAVIS_TAG\",latest}; do docker tag \"$DOCKER_REPO\" \"$DOCKER_REPO\":\"$TAG\";\ndocker push \"$DOCKER_REPO\":\"$TAG\"; done fi"]
+  include:
+  - stage: test
+    install:
+    - yarn
+    script:
+    - yarn test
+  - stage: build
+    services:
+    - docker
+    install:
+    - yarn
+    script:
+    - docker build -t "$DOCKER_REPO" .
+    - if [ ! -z "$TRAVIS_TAG" ]; then docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+      for TAG in {"$TRAVIS_TAG",latest}; do docker tag "$DOCKER_REPO" "$DOCKER_REPO":"$TAG";
+      docker push "$DOCKER_REPO":"$TAG"; done fi
+
 cache:
-    yarn: true
-    directories:
-        - node_modules
+  yarn: true
+  directories:
+  - node_modules
 notifications:
-    email: false
-    slack:
-        secure: jqjkv0xTVftXqHuskVY+UaFEBGby4ahZwv+SNkpp7vkLyfIt+2n/yE1zk/KEkmJywiO3qnHyTqKJhVf4eJ9uLQTw5QDItxmq2EPAtCjnfM8lBPe0UoCrqXILXMZW83NyXVkxYBNjqxe1k5b41dJesMTXaG9SMhzLTTV4+6WKftv3cN2ay16/bauqUVn/GUF1QaDxnVBoshTRgXMtnm1hGjif/wgoxzYWBy22BQSy16C5OY529L1enEoaVykOLPDAjp8Q/NdJGiW8H5xQT47HCkIxPYGceoHJEkJF/Zc7t1xFbDKxdhe3vcsGBF+pk+xj+rPvprvLmAd36iYGlzWYndaRWWcRL/2MZelmHioX/qXbk+F7TaUN3AeL695lwp7xPQ1TWqGd030WtSNrm240sfgdbNj5unxKbuOGmdBzzKkmiRMC4CJtmoUSIaGNi8FvO9rWFmL8GvNOWRVmc4vjUk9eNeDkLOqaOHPMnJD/THvNnh6VgefeDrsXqaH/4HZ64OCEXnxOdwRDx098at2G1Fmv0dUAbCA6utco8lSwEmTPB9ucLnmZdxfPa5c2TAV3is0A2tNB00Gex27IzNcjLPHI13qQCKcMAMHx4Qex/Zp73pbkij0aqevU+ikyvNvFtn+f6iPqzAn4OMSi6xxUxl5cQry9QZKT882JSe4kmcg=
-        on_pull_requests: false
+  email: false
+  slack:
+    secure: jqjkv0xTVftXqHuskVY+UaFEBGby4ahZwv+SNkpp7vkLyfIt+2n/yE1zk/KEkmJywiO3qnHyTqKJhVf4eJ9uLQTw5QDItxmq2EPAtCjnfM8lBPe0UoCrqXILXMZW83NyXVkxYBNjqxe1k5b41dJesMTXaG9SMhzLTTV4+6WKftv3cN2ay16/bauqUVn/GUF1QaDxnVBoshTRgXMtnm1hGjif/wgoxzYWBy22BQSy16C5OY529L1enEoaVykOLPDAjp8Q/NdJGiW8H5xQT47HCkIxPYGceoHJEkJF/Zc7t1xFbDKxdhe3vcsGBF+pk+xj+rPvprvLmAd36iYGlzWYndaRWWcRL/2MZelmHioX/qXbk+F7TaUN3AeL695lwp7xPQ1TWqGd030WtSNrm240sfgdbNj5unxKbuOGmdBzzKkmiRMC4CJtmoUSIaGNi8FvO9rWFmL8GvNOWRVmc4vjUk9eNeDkLOqaOHPMnJD/THvNnh6VgefeDrsXqaH/4HZ64OCEXnxOdwRDx098at2G1Fmv0dUAbCA6utco8lSwEmTPB9ucLnmZdxfPa5c2TAV3is0A2tNB00Gex27IzNcjLPHI13qQCKcMAMHx4Qex/Zp73pbkij0aqevU+ikyvNvFtn+f6iPqzAn4OMSi6xxUxl5cQry9QZKT882JSe4kmcg=
+    on_pull_requests: false
